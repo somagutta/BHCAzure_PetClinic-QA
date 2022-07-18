@@ -111,7 +111,7 @@ jobs:
         subscriptionId: ${{secrets.AZURE_SUBSCRIPTION}}
         resourceGroupName: ${{env.RESOURCE_GROUP}}
         template: ./infra/ARM/templates/WindowsVM/WindowsVm_Template.json
-        parameters: ./infra/ARM/parameters/Env/prod/WindowsVM/windowsvm_parameters.json adminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.virtualMachine2Name}}"  location=eastus  subnetName="${{env.VM_SUBNET}}" networkInterfaceName="${{env.NIC2_NAME}}" virtualNetworkName="${{env.VM_VNET_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
+        parameters: ./infra/ARM/parameters/Env/QA/WindowsVM/windowsvm_parameters.json adminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.virtualMachine2Name}}"  location=eastus  subnetName="${{env.VM_SUBNET}}" networkInterfaceName="${{env.NIC2_NAME}}" virtualNetworkName="${{env.VM_VNET_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
 
     #----------------------------------
     #--- Provision the Third APP VM
@@ -126,7 +126,7 @@ jobs:
         subscriptionId: ${{secrets.AZURE_SUBSCRIPTION}}
         resourceGroupName: ${{env.RESOURCE_GROUP}}
         template: ./infra/ARM/templates/WindowsVM/WindowsVm_Template.json
-        parameters: ./infra/ARM/parameters/Env/prod/WindowsVM/windowsvm_parameters.json adminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.sql_VM_Name}}"  location=eastus virtualNetworkId="${{env.VNET_ID}}"  subnetName="${{env.SQL_SUBNET}}" networkInterfaceName="${{env.SQL_NIC_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
+        parameters: ./infra/ARM/parameters/Env/QA/WindowsVM/windowsvm_parameters.json adminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.sql_VM_Name}}"  location=eastus virtualNetworkId="${{env.VNET_ID}}"  subnetName="${{env.SQL_SUBNET}}" networkInterfaceName="${{env.SQL_NIC_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
     #--------------------
     #--- Login to Azure 
     #--------------------
