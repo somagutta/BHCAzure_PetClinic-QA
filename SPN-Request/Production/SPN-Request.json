@@ -1,0 +1,9 @@
+{
+    "ResourceGroup": "RG-FEM-NONHCPROD-EASTUS-PROD",
+    "Subscription": "BH_NON_HC_PROD1",
+	"GitHubRepository": "https://github.com/BH-Corporate-Functions/Officina2.0-feature-1100010295-field-employee-management",
+    "ApplicationName": "Field_Employee_Management-FEM",
+    "Environment" : "Production",
+	"ApplicationCI": "1100010295",
+	"RequestComment": "This request is for adding the GitHub Repository secrets SPN this branch https://github.com/BH-Corporate-Functions/Officina2.0-feature-1100010295-field-employee-management Branch."
+}

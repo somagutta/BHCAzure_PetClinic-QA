@@ -1,0 +1,155 @@
+##################################################################################################
+###
+###  Workflow: infra-build
+###
+###  Description:  This workflow provisions five Azure Resources:
+###                   1. Two APP VMs
+###                   2. Backend MySQL DB Server
+###                   3. Self-Hosted GitHub Runner
+###
+###                In order to join the APP VMs and MySQL DB servers to the Baker Hughes
+###                Active Directory Domain a Post Provision ARM is executed on the 
+###                newly provisioned VMs.  The domain template files and rpm files are
+###                retrieved from a centrally managed storage account.  Additionally,
+###                passwords and IDs are retieved from a central key vault.  
+### 
+###                The PetClinicPOC is built on a self-hosted runner as it must have 
+###                access to the provisioned MySQL server in order to link the application
+###                to it.
+###
+################################################################################################
+name: workflow-BlackBook-QA
+
+#-----------------------------------------------------------
+#--- Update resources names here as per Naming convention.
+#-----------------------------------------------------------
+env:
+  RESOURCE_GROUP: 'RG-BLACKBOOK-BH_HCNONPROD_1-EASTUS-QA'
+  LOC: 'eastus'
+  # INFRA_BLOB_CONTAINER: 'infra-artifacts'
+  GitHubRepo: 'somagutta/BHCAzure_PetClinic-QA'
+  VM_ADMIN_USERNAME: 'bhadmin'
+  SUBSCRIPTION_ID: '${{secrets.AZURE_SUBSCRIPTION_ID}}'
+  AZURE_CLIENT_ID: '${{secrets.AZURE_CLIENT_ID}}'
+  VNET_ID: '${{secrets.VNET_ID}}'
+  GOLDEN_IMAGE_ID: '${{secrets.IMAGE_REF}}'
+  virtualMachine1Name: 'BHAZW02110004Q'
+  VM_VNET_NAME: 'SPOKE-HCNONPROD-USEAST'
+  VM_PASSWORD: '${{secrets.VM01_PASSWORD}}'
+  NIC1_NAME: 'NIC-BHAZW02110004Q-01'
+  VM_SUBNET: 'INTERNAL-APP-10.124.24.0-25'
+  sql_VM_Name: 'BHAZW02120005Q'
+  SQL_NIC_NAME: 'NIC-BHAZW02120005Q-01'
+  SQL_VNET_ID: '${{secrets.VNET_ID}}'
+  SQL_VNET_NAME: 'SPOKE-HCNONPROD-USEAST'
+  SQL_SUBNET: 'INTERNAL-DB-10.124.25.0-25'
+  VNET_RG_NAME: 'RG-BLACKBOOK-HCNONPROD-EASTUS-QA'
+
+
+ 
+on: 
+  push:
+    branches: [ develop ]
+    paths:
+      - 'infra/ARM/parameters/dev/**'
+      - 'infra/ARM/templates/**'
+      - '.github/workflows/infra-deploy-dev.yml'
+  workflow_dispatch:
+    branches: [ develop ]
+    inputs:
+      Deploy:
+        description: 'Manual deployment'     
+        required: true
+        default: 'Manual'
+permissions:
+      id-token: write
+      contents: read
+jobs: 
+  infra-deploy-dev:
+    runs-on: ubuntu-latest
+    environment: 
+    steps:
+    #--------------------
+    #--- Login to Azure 
+    #--------------------
+    - name: Az CLI login
+      uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          # client-id: ${{secrets.AZURE_CLIENT_ID}}
+          # tenant-id: ${{secrets.AZURE_TENANT_ID}}
+          # subscription-id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+
+    - uses: actions/checkout@v2
+      name: "Code checkout"
+      id: codeCheckout
+    
+    #--------------------------------
+    #--- Provision the First APP VM
+    #--------------------------------
+    - name: Deploy Vm BHAZW02110004Q
+      env:  
+        DEPLOY_RES: "yes"
+      id: windowsVmDeploy01
+      if: env.DEPLOY_RES == 'yes'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{secrets.AZURE_SUBSCRIPTION}}
+        resourceGroupName: ${{env.RESOURCE_GROUP}}
+        template: ./infra/ARM/templates/WindowsVM/WindowsVm_Template.json
+        parameters: ./infra/ARM/parameters/Env/prod/WindowsVM/windowsvm_parameters.json adminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.virtualMachine1Name}}"  location=eastus   subnetName="${{env.VM_SUBNET}}" networkInterfaceName="${{env.NIC1_NAME}}" virtualNetworkName="${{env.VM_VNET_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
+    #----------------------------------
+    #--- Provision the Second APP VM
+    #----------------------------------
+    - name: Deploy Vm BHAZW05140007P
+      env: 
+        DEPLOY_RES: "yes"
+      id: windowsVmDeploy02
+      if: env.DEPLOY_RES == 'yes'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{secrets.AZURE_SUBSCRIPTION}}
+        resourceGroupName: ${{env.RESOURCE_GROUP}}
+        template: ./infra/ARM/templates/WindowsVM/WindowsVm_Template.json
+        parameters: ./infra/ARM/parameters/Env/prod/WindowsVM/windowsvm_parameters.json adminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.virtualMachine2Name}}"  location=eastus  subnetName="${{env.VM_SUBNET}}" networkInterfaceName="${{env.NIC2_NAME}}" virtualNetworkName="${{env.VM_VNET_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
+
+    #----------------------------------
+    #--- Provision the Third APP VM
+    #----------------------------------
+    - name: Deploy Vm BHAZW05120008P
+      env: 
+        DEPLOY_RES: "no"
+      id: windowsVmDeploy03
+      if: env.DEPLOY_RES == 'yes'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{secrets.AZURE_SUBSCRIPTION}}
+        resourceGroupName: ${{env.RESOURCE_GROUP}}
+        template: ./infra/ARM/templates/WindowsVM/WindowsVm_Template.json
+        parameters: ./infra/ARM/parameters/Env/prod/WindowsVM/windowsvm_parameters.json adminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.sql_VM_Name}}"  location=eastus virtualNetworkId="${{env.VNET_ID}}"  subnetName="${{env.SQL_SUBNET}}" networkInterfaceName="${{env.SQL_NIC_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
+    #--------------------
+    #--- Login to Azure 
+    #--------------------
+    - name: Az CLI login
+      uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
+          # client-id: ${{secrets.AZURE_CLIENT_ID}}
+          # tenant-id: ${{secrets.AZURE_TENANT_ID}}
+          # subscription-id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+    #-----------------------------------
+    #--- Provision the tags script
+    #-----------------------------------
+  
+     
+    - name: Run Azure PowerShell script
+      env: 
+        DEPLOY_RES: "yes"
+      if: env.DEPLOY_RES == 'yes'   
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          Set-AzContext -Subscription ${{secrets.AZURE_SUBSCRIPTION_ID}}
+          ./infra/Scripts/tags_script.ps
+        azPSVersion: "latest"

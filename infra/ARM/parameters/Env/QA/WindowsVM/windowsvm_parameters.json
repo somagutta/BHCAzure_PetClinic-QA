@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "imageRefId": {
+            "value": null
+        },
+        "virtualMachineName": {
+            "value": null
+        },
+        "osDiskType": {
+            "value": "Premium"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_D2s_v3"
+        },
+        "adminUsername": {
+            "value": "bhadmin"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "osDisksizeGB": {
+            "value": 128
+        },
+        "datadisksize": {
+            "value": 128
+        },
+        "vnetRgName": {
+            "value": "RG-BLACKBOOK-BH_HCNONPROD_1-EASTUS-QA"
+        },
+        "virtualNetworkName": {
+            "value": "SPOKE-HCNONPROD-USEAST"
+        },
+        "subnetName": {
+            "value": "INTERNAL-APP-10.124.24.0-25"
+        },
+        "vnetSubID": {
+            "value": null
+        },
+        "virtualNetworkId": {
+            "value": null
+        }
+    }
+}

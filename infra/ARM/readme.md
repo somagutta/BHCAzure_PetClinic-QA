@@ -1,0 +1,1 @@
+This folder maintains the ARM templates and parameter files associated.

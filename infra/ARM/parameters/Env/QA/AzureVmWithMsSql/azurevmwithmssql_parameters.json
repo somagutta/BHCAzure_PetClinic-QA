@@ -1,0 +1,69 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "virtualMachineName": {
+        "value": "BHAZW02110004Q"
+      }, 
+      "virtualMachineSize": {
+        "value": "Standard_D8s_v3"
+      },
+      "imageRefId": {
+        "value": null
+      },
+      "imageOffer": {
+        "value": "sql2019-ws2019"
+      },
+      "sqlSku": {
+        "value": "Standard"
+      },
+      "storageaccountsku": {
+        "value": "Premium_LRS"
+      },
+      "adminUsername": {
+        "value": ""
+      },
+      "diskSizeGB": {
+        "value": 128
+      },
+      "adminPassword": {
+        "value": ""
+      },
+      "storageWorkloadType": {
+        "value": "General"
+      },
+      "sqlDataDisksCount": {
+        "value": 1
+      },
+      "networkInterfaceName": {
+        "value": null
+      },
+      "dataPath": {
+        "value": "F:\\SQLData"
+      },
+      "tempDbPath": {
+        "value": "D:\\SQLTemp"
+      },      
+      "sqlLogDisksCount": {
+        "value": 1
+      },
+      "logPath": {
+        "value": "G:\\SQLLog"
+      },
+      "location": {
+        "value": "East US"
+      },
+      "vnetRgName": {
+        "value": "RG-BLACKBOOK-BH_HCNONPROD_1-EASTUS-QA"
+      },
+      "virtualNetworkName": {
+        "value": "SPOKE-HCNONPROD-USEAST"
+      },
+      "subnetName": {
+        "value": "INTERNAL-APP-10.124.24.0-25"
+      },
+      "vnetSubID": {
+        "value": null
+      } 
+    }
+  }

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "mysqlname": {
+      "type": "string"
+    },
+    "mysqlnameAdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mysqlnameAdminLoginPassword": {
+      "type": "securestring"
+    },
+    "dbnameName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dbnameCollation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dbnameEdition": {
+      "type": "string"
+    },
+    "dbnameRequestedServiceObjectiveName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('mysqlname')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "East US",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "mysqlname"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('mysqlnameAdminLogin')]",
+        "administratorLoginPassword": "[parameters('mysqlnameAdminLoginPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "name": "[concat(parameters('mysqlname'),'/AllowAllWindowsAzureIps')]",
+          "type": "Microsoft.Sql/servers/firewallRules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('mysqlname'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[concat(parameters('mysqlname'),'/',parameters('dbnameName'))]",
+          "type": "Microsoft.Sql/servers/databases",
+          "location": "East US",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('mysqlname'))]"
+          ],
+          "tags": {
+            "displayName": "dbname"
+          },
+          "properties": {
+            "collation": "[parameters('dbnameCollation')]",
+            "edition": "[parameters('dbnameEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('dbnameRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+  }
+
+}
