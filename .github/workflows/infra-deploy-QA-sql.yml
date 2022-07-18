@@ -96,7 +96,7 @@ jobs:
       with:
         subscriptionId: ${{secrets.AZURE_SUBSCRIPTION}}
         resourceGroupName: ${{env.RESOURCE_GROUP}}
-        template: ./infra/ARM\templates/WindowsVM/WindowsVm_Template.json
+        template: ./infra/ARM/templates/WindowsVM/WindowsVm_Template.json
         parameters: ./infra/ARM/parameters/Env/QA/WindowsVM/windowsvm_parameters.jsonadminPassword=${{env.VM_PASSWORD}} virtualMachineName="${{env.virtualMachine1Name}}"  location=eastus virtualNetworkId="${{env.VNET_ID}}"  subnetName="${{env.VM_SUBNET}}" networkInterfaceName="${{env.NIC1_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
   
     #-----------------------------------
@@ -112,7 +112,7 @@ jobs:
         subscriptionId: ${{secrets.AZURE_SUBSCRIPTION}}
         resourceGroupName: ${{env.RESOURCE_GROUP}}
         template: ./infra/ARM/templates/AzureVmWithMsSql/azurevmwithmssql_template.json
-        parameters: ./infra/ARM/parameters/Env/prod/AzureVmWithMsSql/azurevmwithmssql_parameters.json adminPassword=${{secrets.SQL_ADMIN_PASSWORD}} adminUsername=${{secrets.SQL_ADMIN}}  virtualMachineName="${{env.sql_VM_Name}}" virtualNetworkName="${{env.SQL_VNET_NAME}}"  subnetName="${{env.SQL_SUBNET}}" networkInterfaceName="${{env.SQL_NIC_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
+        parameters: ./infra/ARM/parameters/Env/QA/AzureVmWithMsSql/azurevmwithmssql_parameters.json adminPassword=${{secrets.SQL_ADMIN_PASSWORD}} adminUsername=${{secrets.SQL_ADMIN}}  virtualMachineName="${{env.sql_VM_Name}}" virtualNetworkName="${{env.SQL_VNET_NAME}}"  subnetName="${{env.SQL_SUBNET}}" networkInterfaceName="${{env.SQL_NIC_NAME}}" vnet_rg="${{env.VNET_RG_NAME}}"
 
     #--------------------
     #--- Login to Azure 
